@@ -3258,6 +3258,8 @@ CONTAINS
             MODIS_waterSize*1.0e6_wp, MODIS_opticalThicknessIce,                     &
             MODIS_iceSize*1.0e6_wp, MODIS_opticalThicknessSnow,                      &
             MODIS_snowSize*1.0e6_wp, cospIN%fracLiq, cospIN%asym, cospIN%ss_alb)
+       cospIN%tau_067 =  MODIS_opticalThicknessLiq + MODIS_opticalThicknessIce +  &
+            MODIS_opticalThicknessSnow
 
     endif ! MODIS simulator optics
     call t_stopf("modis_optics")
