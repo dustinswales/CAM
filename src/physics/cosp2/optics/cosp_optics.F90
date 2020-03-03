@@ -202,14 +202,14 @@ contains
           ! Combine ice, snow and water optical properties
           tau(1:nLevels) = tauICE(j,i,1:nLevels) + tauLIQ(j,i,1:nLevels) + tauSNOW(j,i,1:nLevels)
           where (tau(1:nLevels) > 0) 
-             g(j,i,1:nLevels)  = (tauLIQ(j,i,1:nLevels)*water_g(1:nLevels)  + &
-                                  tauICE(j,i,1:nLevels)*ice_g(1:nLevels)    + &
-                                  tauSNOW(j,i,1:nLevels)*snow_g(1:nLevels)) / & 
+             w0(j,i,1:nLevels) = (tauLIQ(j,i,1:nLevels)*water_w0(1:nLevels)  + &
+                                  tauICE(j,i,1:nLevels)*ice_w0(1:nLevels)    + &
+                                  tauSNOW(j,i,1:nLevels)*snow_w0(1:nLevels)) / & 
                                   tau(1:nLevels) 
-             w0(j,i,1:nLevels) = (tauLIQ(j,i,1:nLevels)*water_g(1:nLevels)*water_w0(1:nLevels) + &
-                                  tauICE(j,i,1:nLevels)*ice_g(1:nLevels)*ice_w0(1:nLevels)    + &
+             g(j,i,1:nLevels)  = (tauLIQ(j,i,1:nLevels)*water_g(1:nLevels)*water_w0(1:nLevels) + &
+                                  tauICE(j,i,1:nLevels)*ice_g(1:nLevels)*ice_w0(1:nLevels)     + &
                                   tauSNOW(j,i,1:nLevels)*snow_g(1:nLevels)*snow_w0(1:nLevels)) / &
-                                  (g(j,i,1:nLevels) * tau(1:nLevels))
+                                  (w0(j,i,1:nLevels) * tau(1:nLevels))
           end where
        enddo
     enddo
