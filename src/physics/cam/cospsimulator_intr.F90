@@ -2167,6 +2167,92 @@ CONTAINS
     call t_stopf("cosp_histfile_aux")
 
     ! ######################################################################################
+    ! Set dark-scenes to fill value. Only done for passive simulators and when cosp_runall=F
+    ! ######################################################################################
+    call t_startf("sunlit_passive")
+    if (.not. cosp_runall) then
+       ! ISCCP simulator
+       if (lisccp_sim) then
+          ! 1D
+          where(cam_sunlit(1:ncol) .eq. 0)
+             cospOUT%isccp_totalcldarea(1:ncol)  = R_UNDEF
+             cospOUT%isccp_meanptop(1:ncol)      = R_UNDEF
+             cospOUT%isccp_meantaucld(1:ncol)    = R_UNDEF
+             cospOUT%isccp_meanalbedocld(1:ncol) = R_UNDEF
+             cospOUT%isccp_meantb(1:ncol)        = R_UNDEF
+             cospOUT%isccp_meantbclr(1:ncol)     = R_UNDEF
+          end where
+          ! 2D
+          do i=1,nscol_cosp
+             where (cam_sunlit(1:ncol) .eq. 0)
+                cospOUT%isccp_boxtau(1:ncol,i)  = R_UNDEF
+                cospOUT%isccp_boxptop(1:ncol,i) = R_UNDEF
+             end where
+          enddo
+          ! 3D
+          do i=1,nprs_cosp
+             do k=1,ntau_cosp
+                where(cam_sunlit(1:ncol) .eq. 0)
+                   cospOUT%isccp_fq(1:ncol,k,i) = R_UNDEF
+                end where
+             end do
+          end do
+       endif
+       ! MISR simulator
+       if (lmisr_sim) then
+          do i=1,nhtmisr_cosp
+             do k=1,ntau_cosp
+                where(cam_sunlit(1:ncol) .eq. 0)
+                   cospOUT%misr_fq(1:ncol,k,i) = R_UNDEF
+                end where
+             end do
+          end do
+       end if
+       ! MODIS simulator
+       if (lmodis_sim) then
+          ! 1D
+          where(cam_sunlit(1:ncol) .eq. 0)
+             cospOUT%modis_Cloud_Fraction_Total_Mean(1:ncol)       = R_UNDEF
+             cospOUT%modis_Cloud_Fraction_Water_Mean(1:ncol)       = R_UNDEF
+             cospOUT%modis_Cloud_Fraction_Ice_Mean(1:ncol)         = R_UNDEF
+             cospOUT%modis_Cloud_Fraction_High_Mean(1:ncol)        = R_UNDEF
+             cospOUT%modis_Cloud_Fraction_Mid_Mean(1:ncol)         = R_UNDEF
+             cospOUT%modis_Cloud_Fraction_Low_Mean(1:ncol)         = R_UNDEF
+             cospOUT%modis_Optical_Thickness_Total_Mean(1:ncol)    = R_UNDEF
+             cospOUT%modis_Optical_Thickness_Water_Mean(1:ncol)    = R_UNDEF
+             cospOUT%modis_Optical_Thickness_Ice_Mean(1:ncol)      = R_UNDEF
+             cospOUT%modis_Optical_Thickness_Total_LogMean(1:ncol) = R_UNDEF
+             cospOUT%modis_Optical_Thickness_Water_LogMean(1:ncol) = R_UNDEF
+             cospOUT%modis_Optical_Thickness_Ice_LogMean(1:ncol)   = R_UNDEF
+             cospOUT%modis_Cloud_Particle_Size_Water_Mean(1:ncol)  = R_UNDEF
+             cospOUT%modis_Cloud_Particle_Size_Ice_Mean(1:ncol)    = R_UNDEF
+             cospOUT%modis_Cloud_Top_Pressure_Total_Mean(1:ncol)   = R_UNDEF
+             cospOUT%modis_Liquid_Water_Path_Mean(1:ncol)          = R_UNDEF
+             cospOUT%modis_Ice_Water_Path_Mean(1:ncol)             = R_UNDEF
+          endwhere
+          ! 3D
+          do i=1,ntau_cosp_modis
+             do k=1,nprs_cosp
+                where(cam_sunlit(1:ncol) .eq. 0)
+                   cospOUT%modis_Optical_Thickness_vs_Cloud_Top_Pressure(1:ncol,i,k) = R_UNDEF 
+                end where
+             enddo
+             do k=1,numMODISReffIceBins
+                where(cam_sunlit(1:ncol) .eq. 0)
+                   cospOUT%modis_Optical_Thickness_vs_ReffICE(1:ncol,i,k) = R_UNDEF
+                end where
+             end do
+             do k=1,numMODISReffLiqBins
+                where(cam_sunlit(1:ncol) .eq. 0)
+                   cospOUT%modis_Optical_Thickness_vs_ReffLIQ(1:ncol,i,k) = R_UNDEF
+                end where
+             enddo
+          enddo
+       end if
+    end if
+    call t_stopf("sunlit_passive")
+
+    ! ######################################################################################
     ! Copy COSP outputs to CAM fields.
     ! ######################################################################################
     call t_startf("output_copying")
