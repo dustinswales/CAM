@@ -2167,52 +2167,6 @@ CONTAINS
     call t_stopf("cosp_histfile_aux")
 
     ! ######################################################################################
-    ! Set dark-scenes to fill value. Only done for passive simulators and when cosp_runall=F
-    ! ######################################################################################
-    call t_startf("sunlit_passive")
-    if (.not. cosp_runall) then
-       ! ISCCP simulator
-       if (lisccp_sim) then
-          ! 1D
-          where(cam_sunlit(1:ncol) .eq. 0)
-             cospOUT%isccp_totalcldarea(1:ncol)  = R_UNDEF
-             cospOUT%isccp_meanptop(1:ncol)      = R_UNDEF
-             cospOUT%isccp_meantaucld(1:ncol)    = R_UNDEF
-             cospOUT%isccp_meanalbedocld(1:ncol) = R_UNDEF
-             cospOUT%isccp_meantb(1:ncol)        = R_UNDEF
-             cospOUT%isccp_meantbclr(1:ncol)     = R_UNDEF
-          end where
-          ! 2D
-          do i=1,nscol_cosp
-             where (cam_sunlit(1:ncol) .eq. 0)
-                cospOUT%isccp_boxtau(1:ncol,i)  = R_UNDEF
-                cospOUT%isccp_boxptop(1:ncol,i) = R_UNDEF
-             end where
-          enddo
-          ! 3D
-          do i=1,nprs_cosp
-             do k=1,ntau_cosp
-                where(cam_sunlit(1:ncol) .eq. 0)
-                   cospOUT%isccp_fq(1:ncol,k,i) = R_UNDEF
-                end where
-             end do
-          end do
-       endif
-
-       ! MISR simulator
-       if (lmisr_sim) then
-          do i=1,nhtmisr_cosp
-             do k=1,ntau_cosp
-                where(cam_sunlit(1:ncol) .eq. 0)
-                   cospOUT%misr_fq(1:ncol,k,i) = R_UNDEF
-                end where
-             end do
-          end do
-       end if
-    end if
-    call t_stopf("sunlit_passive")
-
-    ! ######################################################################################
     ! Copy COSP outputs to CAM fields.
     ! ######################################################################################
     call t_startf("output_copying")
