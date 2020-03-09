@@ -2275,8 +2275,8 @@ CONTAINS
     if (lcloudsat_sim) then 
        cfad_dbze94(1:ncol,1:CLOUDSAT_DBZE_BINS,1:nht_cosp) = cospOUT%cloudsat_cfad_ze  ! cfad_dbze94 (time,height,dbze,profile)
        dbze94(1:ncol,1:nscol_cosp,1:nhtml_cosp)    = cospOUT%cloudsat_Ze_tot           ! dbze94 (time,height_mlev,column,profile)
-       cldtot_cs(1:ncol)  = cospOUT%cloudsat_radar_tcc                                 ! cltradar (time,profile)
-       cldtot_cs2(1:ncol) = cospOUT%cloudsat_radar_tcc2                                ! cltradar2 (time,profile)   
+       cldtot_cs(1:ncol)  = cospOUT%cloudsat_tcc                                 ! cltradar (time,profile)
+       cldtot_cs2(1:ncol) = cospOUT%cloudsat_tcc2                                ! cltradar2 (time,profile)   
 
        ! Cloudsat near-surface precipitation diagnostics
        ptcloudsatflag0(1:ncol) = cospOUT%cloudsat_precip_cover(:,1)
@@ -3449,8 +3449,8 @@ CONTAINS
     if (lcloudsat_sim .and. lcalipso_sim) then
        allocate(x%lidar_only_freq_cloud(Npoints,Nlvgrid))
        allocate(x%cloudsat_calipso_tcc(Npoints)) 
-       allocate(x%cloudsat_radar_tcc(Npoints))
-       allocate(x%cloudsat_radar_tcc2(Npoints))
+       allocate(x%cloudsat_tcc(Npoints))
+       allocate(x%cloudsat_tcc2(Npoints))
    endif
 
   end subroutine construct_cosp_outputs
@@ -3596,13 +3596,13 @@ CONTAINS
         deallocate(y%cloudsat_calipso_tcc) 
         nullify(y%cloudsat_calipso_tcc)  
      endif
-     if (associated(y%cloudsat_radar_tcc))           then
-        deallocate(y%cloudsat_radar_tcc) 
-        nullify(y%cloudsat_radar_tcc)  
+     if (associated(y%cloudsat_tcc))           then
+        deallocate(y%cloudsat_tcc) 
+        nullify(y%cloudsat_tcc)  
      endif
-    if (associated(y%cloudsat_radar_tcc2))           then
-        deallocate(y%cloudsat_radar_tcc2) 
-        nullify(y%cloudsat_radar_tcc2)  
+    if (associated(y%cloudsat_tcc2))           then
+        deallocate(y%cloudsat_tcc2) 
+        nullify(y%cloudsat_tcc2)  
      endif
      if (associated(y%lidar_only_freq_cloud))     then
         deallocate(y%lidar_only_freq_cloud)
