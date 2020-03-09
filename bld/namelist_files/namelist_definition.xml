@@ -2254,7 +2254,7 @@ sets cosp_ncolumns=10 and cosp_nradsteps=3
 (appropriate for COSP statistics derived from seasonal averages),
 and runs MISR, ISCCP, MODIS, CloudSat radar and CALIPSO lidar simulators
 (cosp_lmisr_sim=.true.,cosp_lisccp_sim=.true.,
-cosp_lmodis_sim=.true.,cosp_lradar_sim=.true.,cosp_llidar_sim=.true.).
+cosp_lmodis_sim=.true.,cosp_lcloudsat_sim=.true.,cosp_lcalipso_sim=.true.).
 This default logical is set in cospsimulator_intr.F90.
 Default: FALSE
 </entry>
@@ -2267,7 +2267,7 @@ sets cosp_ncolumns=10 and cosp_nradsteps=3
 (appropriate for COSP statistics derived from seasonal averages),
 and runs MISR, ISCCP, MODIS, and CALIPSO lidar simulators
 (cosp_lmisr_sim=.true.,cosp_lisccp_sim=.true.,
-cosp_lmodis_sim=.true.,cosp_llidar_sim=.true.).
+cosp_lmodis_sim=.true.,cosp_lcalipso_sim=.true.).
 This default logical is set in cospsimulator_intr.F90.
 Default: FALSE
 </entry>
@@ -2291,7 +2291,7 @@ select output for the AMWG diagnostics package.
 sets cosp_ncolumns=10 and cosp_nradsteps=3
 (appropriate for COSP statistics derived from seasonal averages),
 and runs CloudSat radar and CALIPSO lidar simulators
-(cosp_lradar_sim=.true.,cosp_llidar_sim=.true.).
+(cosp_lcloudsat_sim=.true.,cosp_lcalipso_sim=.true.).
 This default logical is set in cospsimulator_intr.F90.
 Default: FALSE
 </entry>
@@ -2304,7 +2304,7 @@ sets cosp_ncolumns=10 and cosp_nradsteps=3
 (appropriate for COSP statistics derived from seasonal averages),
 and runs ISCCP simulator
 (cosp_lmisr_sim=.false.,cosp_lisccp_sim=.true.,
-cosp_lmodis_sim=.false.,cosp_lradar_sim=.false.,cosp_llidar_sim=.false.).
+cosp_lmodis_sim=.false.,cosp_lcloudsat_sim=.false.,cosp_lcalipso_sim=.false.).
 This default logical is set in cospsimulator_intr.F90.
 1236: Default: FALSE
 </entry>
@@ -2318,16 +2318,16 @@ simulator in an offline mode (via setting cosp_histfile_aux=.true.).
 Default: FALSE
 </entry>
 
-<entry id="cosp_lradar_sim" type="logical"  category="cosp"
+<entry id="cosp_lcloudsat_sim" type="logical"  category="cosp"
        group="cospsimulator_nl" valid_values="">
-If true, COSP radar simulator will be run and all non-subcolumn output
+If true, COSP cloudsat simulator will be run and all non-subcolumn output
 will be saved.
 Default: FALSE
 </entry>
 
-<entry id="cosp_llidar_sim" type="logical"  category="cosp"
+<entry id="cosp_lcalipso_sim" type="logical"  category="cosp"
        group="cospsimulator_nl" valid_values="">
-If true, COSP lidar simulator will be run and all non-subcolumn output
+If true, COSP calipso simulator will be run and all non-subcolumn output
 will be saved
 Default: FALSE
 </entry>
@@ -2403,7 +2403,7 @@ Default: 1
 <entry id="cosp_lfrac_out" type="logical"  category="cosp"
        group="cospsimulator_nl" valid_values="">
 Turns on sub-column output from COSP.
-If both the isccp/misr simulators and the lidar/radar simulators
+If both the isccp/misr simulators and the calipso/cloudsat simulators
 are run, lfrac_out is from the isccp/misr simulators columns.
 This default logical is set in cospsimulator_intr.F90
 Default: FALSE
