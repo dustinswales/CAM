@@ -1079,10 +1079,7 @@ CONTAINS
        end if
     end if
     
-    !! ADDFLD, ADD_DEFAULT, OUTFLD CALLS FOR COSP OUTPUTS IF RUNNING COSP OFF-LINE
-    !! Note: A suggestion was to add all of the CAM variables needed to add to make it possible to run COSP off-line
-    !! These fields are available and can be called from the namelist though.  Here, when the cosp_runall mode is invoked
-    !! all of the inputs are saved on the cam history file.  This is good de-bugging functionality we should maintain.
+    ! Create output file for running COSP2 offline. *NOTE* This is a ton of output so beware.
     if (cosp_histfile_aux) then
        call addfld ('PS_COSP',         horiz_only,            'I','Pa',     'PS_COSP',                            &
             flag_xyfill=.true., fill_value=R_UNDEF)
@@ -1130,7 +1127,7 @@ CONTAINS
             flag_xyfill=.true., fill_value=R_UNDEF)
        call addfld ('CS_g_vol',        (/'cosp_scol','lev      '/), 'I','1',      'Attenuation coefficient (gases) (CLOUDSAT)',   &
             flag_xyfill=.true., fill_value=R_UNDEF)
-
+       ! Set default values
        call add_default ('PS_COSP',         cosp_histfile_aux_num,' ')
        call add_default ('TS_COSP',         cosp_histfile_aux_num,' ')
        call add_default ('P_COSP',          cosp_histfile_aux_num,' ')
@@ -1689,8 +1686,17 @@ CONTAINS
     tau067_out(1:pcols,1:nhtml_cosp*nscol_cosp)      = R_UNDEF ! +cosp2
     emis11_out(1:pcols,1:nhtml_cosp*nscol_cosp)      = R_UNDEF ! +cosp2
     asym34_out(1:pcols,1:nhtml_cosp*nscol_cosp)      = R_UNDEF ! +cosp2
-    ssa34_out(1:pcols,1:nhtml_cosp*nscol_cosp)      = R_UNDEF ! +cosp2
-    fracLiq_out(1:pcols,1:nhtml_cosp*nscol_cosp)      = R_UNDEF ! +cosp2
+    ssa34_out(1:pcols,1:nhtml_cosp*nscol_cosp)       = R_UNDEF ! +cosp2
+    fracLiq_out(1:pcols,1:nhtml_cosp*nscol_cosp)     = R_UNDEF ! +cosp2
+    cal_betatot(1:pcols,1:nhtml_cosp*nscol_cosp)     = R_UNDEF
+    cal_betatot_ice(1:pcols,1:nhtml_cosp*nscol_cosp) = R_UNDEF
+    cal_betatot_liq(1:pcols,1:nhtml_cosp*nscol_cosp) = R_UNDEF
+    cal_tautot(1:pcols,1:nhtml_cosp*nscol_cosp)      = R_UNDEF
+    cal_tautot_ice(1:pcols,1:nhtml_cosp*nscol_cosp)  = R_UNDEF
+    cal_tautot_liq(1:pcols,1:nhtml_cosp*nscol_cosp)  = R_UNDEF
+    cs_gvol_out(1:pcols,1:nhtml_cosp*nscol_cosp)     = R_UNDEF
+    cs_krvol_out(1:pcols,1:nhtml_cosp*nscol_cosp)    = R_UNDEF
+    cs_zvol_out(1:pcols,1:nhtml_cosp*nscol_cosp)     = R_UNDEF
 
     ! ######################################################################################
     ! DECIDE WHICH COLUMNS YOU ARE GOING TO RUN COSP ON....
@@ -2145,36 +2151,54 @@ CONTAINS
     call t_startf("cosp_histfile_aux")
     if (cosp_histfile_aux) then
        ! 1D outputs
-       call outfld('PS_COSP',        state%ps(1:ncol),             ncol,lchnk)
-       call outfld('TS_COSP',        cospstateIN%skt,              ncol,lchnk)
+       call outfld('PS_COSP',        state%ps(1:ncol),            ncol,lchnk)
+       call outfld('TS_COSP',        cospstateIN%skt,             ncol,lchnk)
        
        ! 2D outputs
-       call outfld('P_COSP',         cospstateIN%pfull,            ncol,lchnk)
-       call outfld('PH_COSP',        cospstateIN%phalf,            ncol,lchnk)
-       call outfld('ZLEV_COSP',      cospstateIN%hgt_matrix,       ncol,lchnk)
-       call outfld('ZLEV_HALF_COSP', cospstateIN%hgt_matrix_half,  ncol,lchnk)
-       call outfld('T_COSP',         cospstateIN%at,               ncol,lchnk)
-       call outfld('RH_COSP',        cospstateIN%qv,               ncol,lchnk)
-       call outfld('Q_COSP',         q(1:ncol,1:pver),             ncol,lchnk)
+       call outfld('P_COSP',         cospstateIN%pfull,           ncol,lchnk)
+       call outfld('PH_COSP',        cospstateIN%phalf,           ncol,lchnk)
+       call outfld('ZLEV_COSP',      cospstateIN%hgt_matrix,      ncol,lchnk)
+       call outfld('ZLEV_HALF_COSP', cospstateIN%hgt_matrix_half, ncol,lchnk)
+       call outfld('T_COSP',         cospstateIN%at,              ncol,lchnk)
+       call outfld('RH_COSP',        cospstateIN%qv,              ncol,lchnk)
+       call outfld('Q_COSP',         q(1:ncol,1:pver),            ncol,lchnk)
 
        ! 3D outputs, but first compress to 2D
        do i=1,ncol
           do ihml=1,nhtml_cosp
              do isc=1,nscol_cosp
                 ihsc = (ihml-1)*nscol_cosp+isc                 
-                tau067_out(i,ihsc)  = cospIN%tau_067(i,isc,ihml)
-                emis11_out(i,ihsc)  = cospIN%emiss_11(i,isc,ihml)
-                ssa34_out(i,ihsc)   = cospIN%ss_alb(i,isc,ihml)
-                asym34_out(i,ihsc)  = cospIN%asym(i,isc,ihml)
-                fracLiq_out(i,ihsc) = cospIN%fracLiq(i,isc,ihml)
+                tau067_out(i,ihsc)      = cospIN%tau_067(i,isc,ihml)
+                emis11_out(i,ihsc)      = cospIN%emiss_11(i,isc,ihml)
+                ssa34_out(i,ihsc)       = cospIN%ss_alb(i,isc,ihml)
+                asym34_out(i,ihsc)      = cospIN%asym(i,isc,ihml)
+                fracLiq_out(i,ihsc)     = cospIN%fracLiq(i,isc,ihml)
+                cal_betatot(i,ihsc)     = cospIN%betatot_calipso(i,isc,ihml)
+                cal_betatot_ice(i,ihsc) = cospIN%betatot_ice_calipso(i,isc,ihml)
+                cal_betatot_liq(i,ihsc) = cospIN%betatot_liq_calipso(i,isc,ihml)
+                cal_tautot(i,ihsc)      = cospIN%tautot_calipso(i,isc,ihml)
+                cal_tautot_ice(i,ihsc)  = cospIN%tautot_ice_calipso(i,isc,ihml)
+                cal_tautot_liq(i,ihsc)  = cospIN%tautot_liq_calipso(i,isc,ihml)
+                cs_gvol_out(i,ihsc)     = cospIN%g_vol_cloudsat(i,isc,ihml)
+                cs_krvol_out(i,ihsc)    = cospIN%kr_vol_cloudsat(i,isc,ihml)
+                cs_zvol_out(i,ihsc)     = cospIN%z_vol_cloudsat(i,isc,ihml)
              end do
           end do
        end do
-       call outfld('TAU_067',      tau067_out, pcols,lchnk)
-       call outfld('EMISS_11',     emis11_out, pcols,lchnk)
-       call outfld('MODIS_asym',   asym34_out, pcols,lchnk)
-       call outfld('MODIS_ssa',    ssa34_out,  pcols,lchnk)
-       call outfld('MODIS_fracliq',fracLiq_out,pcols,lchnk)
+       call outfld('TAU_067',          tau067_out,      pcols, lchnk)
+       call outfld('EMISS_11',         emis11_out,      pcols, lchnk)
+       call outfld('MODIS_asym',       asym34_out,      pcols, lchnk)
+       call outfld('MODIS_ssa',        ssa34_out,       pcols, lchnk)
+       call outfld('MODIS_fracliq',    fracLiq_out,     pcols, lchnk)
+       call addfld ('CAL_betatot',     cal_betatot,     pcols, lchnk)
+       call addfld ('CAL_betatot_ice', cal_betatot_ice, pcols, lchnk)
+       call addfld ('CAL_betatot_liq', cal_betatot_liq, pcols, lchnk)
+       call addfld ('CAL_tautot',      cal_tautot,      pcols, lchnk)
+       call addfld ('CAL_tautot_ice',  cal_tautot_ice,  pcols, lchnk)
+       call addfld ('CAL_tautot_liq',  cal_tautot_liq,  pcols, lchnk)
+       call addfld ('CS_z_vol',        cs_zvol_out,     pcols, lchnk)
+       call addfld ('CS_kr_vol',       cs_krvol_out,    pcols, lchnk)
+       call addfld ('CS_g_vol',        cs_gvol_out,     pcols, lchnk)
     end if
     call t_stopf("cosp_histfile_aux")
 
