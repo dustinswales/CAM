@@ -1080,7 +1080,7 @@ CONTAINS
     end if
     
     ! Create output file for running COSP2 offline. *NOTE* This is a ton of output so beware.
-    if (cosp_histfile_aux) then
+    if (cosp_histfile_aux) then     
        call addfld ('PS_COSP',         horiz_only,            'I','Pa',     'PS_COSP',                            &
             flag_xyfill=.true., fill_value=R_UNDEF)
        call addfld ('TS_COSP',         horiz_only,            'I','K',      'TS_COSP',                            &
@@ -1095,61 +1095,98 @@ CONTAINS
             flag_xyfill=.true., fill_value=R_UNDEF)
        call addfld ('T_COSP',          (/            'lev'/), 'I','K',      'T_COSP',                             &
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('RH_COSP',         (/            'lev'/), 'I','percent','RH_COSP',                            &
-            flag_xyfill=.true., fill_value=R_UNDEF)
        call addfld ('Q_COSP',          (/            'lev'/), 'I','kg/kg',  'Q_COSP',                             &
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('TAU_067',         (/'cosp_scol','lev      '/), 'I','1',      'Subcolumn 0.67micron optical depth', &
+       call addfld ('CONCLD_COSP',     (/            'lev'/),'I','1',       'CONCLD_COSP', &
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('EMISS_11',        (/'cosp_scol','lev      '/), 'I','1',      'Subcolumn 11micron emissivity',      &
+       call addfld ('CLD_COSP',        (/            'lev'/),'I','1',       'CLD_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('MODIS_fracliq',   (/'cosp_scol','lev      '/), 'I','1',      'Fraction of tau from liquid water',  &
+       call addfld ('O3_COSP',         (/            'lev'/),'I','kg/kg',   'O3_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('MODIS_asym',      (/'cosp_scol','lev      '/), 'I','1',      'Assymetry parameter (MODIS)',        &
+       call addfld ('LSCLIQ_COSP',     (/            'lev'/),'I','kg/kg',   'LSCLIQ_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('MODIS_ssa',       (/'cosp_scol','lev      '/), 'I','1',      'Single-scattering albedo (MODIS)',   &
+       call addfld ('LSCICE_COSP',     (/            'lev'/),'I','kg/kg',   'LSCICE_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('CAL_betatot',     (/'cosp_scol','lev      '/), 'I','1',      'Backscatter coefficient (CALIPSO)',  &
+       call addfld ('CVCLIQ_COSP',     (/            'lev'/),'I','kg/kg',   'CVCLIQ_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('CAL_betatot_ice', (/'cosp_scol','lev      '/), 'I','1',      'Backscatter coefficient (CALIPSO)',  &
+       call addfld ('CVCICE_COSP',     (/            'lev'/),'I','kg/kg',   'CVCICE_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('CAL_betatot_liq', (/'cosp_scol','lev      '/), 'I','1',      'Backscatter coefficient (CALIPSO)',  &
+       call addfld ('RAIN_LS_COSP',    (/            'lev'/),'I','kg/m2/s', 'RAIN_LS_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('CAL_tautot',      (/'cosp_scol','lev      '/), 'I','1',      'Vertically integrated ptical-depth (CALIPSO)', &
+       call addfld ('SNOW_LS_COSP',    (/            'lev'/),'I','kg/m2/s', 'SNOW_LS_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('CAL_tautot_ice',  (/'cosp_scol','lev      '/), 'I','1',      'Vertically integrated ptical-depth (CALIPSO)', &
+       call addfld ('GRPL_LS_COSP',    (/            'lev'/),'I','kg/m2/s', 'GRPL_LS_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('CAL_tautot_liq',  (/'cosp_scol','lev      '/), 'I','1',      'Vertically integrated ptical-depth (CALIPSO)', &
+       call addfld ('RAIN_CV_COSP',    (/            'lev'/),'I','kg/m2/s', 'RAIN_CV_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('CS_z_vol',        (/'cosp_scol','lev      '/), 'I','1',      'Effective reflectivity factor (CLOUDSAT)',     &
+       call addfld ('SNOW_CV_COSP',    (/            'lev'/),'I','kg/m2/s', 'SNOW_CV_COSP',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('CS_kr_vol',       (/'cosp_scol','lev      '/), 'I','1',      'Attenuation coefficient (hydro) (CLOUDSAT)',   &
+       call addfld ('REFF_COSP_1',     (/            'lev'/),'I','m',       'REFF_COSP_1',&
             flag_xyfill=.true., fill_value=R_UNDEF)
-       call addfld ('CS_g_vol',        (/'cosp_scol','lev      '/), 'I','1',      'Attenuation coefficient (gases) (CLOUDSAT)',   &
+       call addfld ('REFF_COSP_2',     (/            'lev'/),'I','m',       'REFF_COSP_2',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('REFF_COSP_3',     (/            'lev'/),'I','m',       'REFF_COSP_3',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('REFF_COSP_4',     (/            'lev'/),'I','m',       'REFF_COSP_4',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('REFF_COSP_5',     (/            'lev'/),'I','m',       'REFF_COSP_5',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('REFF_COSP_6',     (/            'lev'/),'I','m',       'REFF_COSP_6',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('REFF_COSP_7',     (/            'lev'/),'I','m',       'REFF_COSP_7',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('REFF_COSP_8',     (/            'lev'/),'I','m',       'REFF_COSP_8',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('REFF_COSP_9',     (/            'lev'/),'I','m',       'REFF_COSP_9',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('DTAU_S_COSP',     (/            'lev'/),'I','1',       'DTAU_S_COSP',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('DTAU_C_COSP',     (/            'lev'/),'I','1',       'DTAU_C_COSP',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('DEM_S_COSP',      (/            'lev'/),'I','1',       'DEM_S_COSP',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('DEM_C_COSP',      (/            'lev'/),'I','1',       'DEM_C_COSP',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('DTAU_S_COSP_SNOW',(/            'lev'/),'I','1',       'DTAU_S_COSP_SNOW',&
+            flag_xyfill=.true., fill_value=R_UNDEF)
+       call addfld ('DEM_S_COSP_SNOW', (/            'lev'/),'I','1',       'DEM_S_COSP_SNOW',&
             flag_xyfill=.true., fill_value=R_UNDEF)
        ! Set default values
-       call add_default ('PS_COSP',         cosp_histfile_aux_num,' ')
-       call add_default ('TS_COSP',         cosp_histfile_aux_num,' ')
-       call add_default ('P_COSP',          cosp_histfile_aux_num,' ')
-       call add_default ('PH_COSP',         cosp_histfile_aux_num,' ')
-       call add_default ('ZLEV_COSP',       cosp_histfile_aux_num,' ')
-       call add_default ('ZLEV_HALF_COSP',  cosp_histfile_aux_num,' ')
-       call add_default ('T_COSP',          cosp_histfile_aux_num,' ')
-       call add_default ('RH_COSP',         cosp_histfile_aux_num,' ')
-       call add_default ('TAU_067',         cosp_histfile_aux_num,' ')
-       call add_default ('EMISS_11',        cosp_histfile_aux_num,' ')
-       call add_default ('MODIS_fracliq',   cosp_histfile_aux_num,' ')
-       call add_default ('MODIS_asym',      cosp_histfile_aux_num,' ')
-       call add_default ('MODIS_ssa',       cosp_histfile_aux_num,' ')
-       call add_default ('CAL_betatot',     cosp_histfile_aux_num,' ')
-       call add_default ('CAL_betatot_ice', cosp_histfile_aux_num,' ')
-       call add_default ('CAL_betatot_liq', cosp_histfile_aux_num,' ')
-       call add_default ('CAL_tautot',      cosp_histfile_aux_num,' ')
-       call add_default ('CAL_tautot_ice',  cosp_histfile_aux_num,' ')
-       call add_default ('CAL_tautot_liq',  cosp_histfile_aux_num,' ')
-       call add_default ('CS_z_vol',        cosp_histfile_aux_num,' ')
-       call add_default ('CS_kr_vol',       cosp_histfile_aux_num,' ')
-       call add_default ('CS_g_vol',        cosp_histfile_aux_num,' ')
+       call add_default ('PS_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('TS_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('P_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('PH_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('ZLEV_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('ZLEV_HALF_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('T_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('Q_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('CONCLD_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('CLD_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('O3_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('LSCLIQ_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('LSCICE_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('CVCLIQ_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('CVCICE_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('RAIN_LS_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('SNOW_LS_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('GRPL_LS_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('RAIN_CV_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('SNOW_CV_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('REFF_COSP_1',cosp_histfile_aux_num,' ')
+       call add_default ('REFF_COSP_2',cosp_histfile_aux_num,' ')
+       call add_default ('REFF_COSP_3',cosp_histfile_aux_num,' ')
+       call add_default ('REFF_COSP_4',cosp_histfile_aux_num,' ')
+       call add_default ('REFF_COSP_5',cosp_histfile_aux_num,' ')
+       call add_default ('REFF_COSP_6',cosp_histfile_aux_num,' ')
+       call add_default ('REFF_COSP_7',cosp_histfile_aux_num,' ')
+       call add_default ('REFF_COSP_8',cosp_histfile_aux_num,' ')
+       call add_default ('REFF_COSP_9',cosp_histfile_aux_num,' ')
+       call add_default ('DTAU_S_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('DTAU_C_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('DEM_S_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('DEM_C_COSP',cosp_histfile_aux_num,' ')
+       call add_default ('DTAU_S_COSP_SNOW',cosp_histfile_aux_num,' ')
+       call add_default ('DEM_S_COSP_SNOW',cosp_histfile_aux_num,' ')       
     end if
     
     rei_idx        = pbuf_get_index('REI')
@@ -2155,50 +2192,39 @@ CONTAINS
        call outfld('TS_COSP',        cospstateIN%skt,             ncol,lchnk)
        
        ! 2D outputs
-       call outfld('P_COSP',         cospstateIN%pfull,           ncol,lchnk)
-       call outfld('PH_COSP',        cospstateIN%phalf,           ncol,lchnk)
-       call outfld('ZLEV_COSP',      cospstateIN%hgt_matrix,      ncol,lchnk)
-       call outfld('ZLEV_HALF_COSP', cospstateIN%hgt_matrix_half, ncol,lchnk)
-       call outfld('T_COSP',         cospstateIN%at,              ncol,lchnk)
-       call outfld('RH_COSP',        cospstateIN%qv,              ncol,lchnk)
-       call outfld('Q_COSP',         q(1:ncol,1:pver),            ncol,lchnk)
-
-       ! 3D outputs, but first compress to 2D
-       do i=1,ncol
-          do ihml=1,nhtml_cosp
-             do isc=1,nscol_cosp
-                ihsc = (ihml-1)*nscol_cosp+isc                 
-                tau067_out(i,ihsc)      = cospIN%tau_067(i,isc,ihml)
-                emis11_out(i,ihsc)      = cospIN%emiss_11(i,isc,ihml)
-                ssa34_out(i,ihsc)       = cospIN%ss_alb(i,isc,ihml)
-                asym34_out(i,ihsc)      = cospIN%asym(i,isc,ihml)
-                fracLiq_out(i,ihsc)     = cospIN%fracLiq(i,isc,ihml)
-                cal_betatot(i,ihsc)     = cospIN%betatot_calipso(i,isc,ihml)
-                cal_betatot_ice(i,ihsc) = cospIN%betatot_ice_calipso(i,isc,ihml)
-                cal_betatot_liq(i,ihsc) = cospIN%betatot_liq_calipso(i,isc,ihml)
-                cal_tautot(i,ihsc)      = cospIN%tautot_calipso(i,isc,ihml)
-                cal_tautot_ice(i,ihsc)  = cospIN%tautot_ice_calipso(i,isc,ihml)
-                cal_tautot_liq(i,ihsc)  = cospIN%tautot_liq_calipso(i,isc,ihml)
-                cs_gvol_out(i,ihsc)     = cospIN%g_vol_cloudsat(i,isc,ihml)
-                cs_krvol_out(i,ihsc)    = cospIN%kr_vol_cloudsat(i,isc,ihml)
-                cs_zvol_out(i,ihsc)     = cospIN%z_vol_cloudsat(i,isc,ihml)
-             end do
-          end do
-       end do
-       call outfld('TAU_067',         tau067_out,      pcols, lchnk)
-       call outfld('EMISS_11',        emis11_out,      pcols, lchnk)
-       call outfld('MODIS_asym',      asym34_out,      pcols, lchnk)
-       call outfld('MODIS_ssa',       ssa34_out,       pcols, lchnk)
-       call outfld('MODIS_fracliq',   fracLiq_out,     pcols, lchnk)
-       call outfld('CAL_betatot',     cal_betatot,     pcols, lchnk)
-       call outfld('CAL_betatot_ice', cal_betatot_ice, pcols, lchnk)
-       call outfld('CAL_betatot_liq', cal_betatot_liq, pcols, lchnk)
-       call outfld('CAL_tautot',      cal_tautot,      pcols, lchnk)
-       call outfld('CAL_tautot_ice',  cal_tautot_ice,  pcols, lchnk)
-       call outfld('CAL_tautot_liq',  cal_tautot_liq,  pcols, lchnk)
-       call outfld('CS_z_vol',        cs_zvol_out,     pcols, lchnk)
-       call outfld('CS_kr_vol',       cs_krvol_out,    pcols, lchnk)
-       call outfld('CS_g_vol',        cs_gvol_out,     pcols, lchnk)
+       call outfld('P_COSP',          cospstateIN%pfull,           ncol,lchnk)
+       call outfld('PH_COSP',         cospstateIN%phalf,           ncol,lchnk)
+       call outfld('ZLEV_COSP',       cospstateIN%hgt_matrix,      ncol,lchnk)
+       call outfld('ZLEV_HALF_COSP',  cospstateIN%hgt_matrix_half, ncol,lchnk)
+       call outfld('T_COSP',          cospstateIN%at,              ncol,lchnk)
+       call outfld('Q_COSP',          cospstateIN%qv,              ncol,lchnk)
+       call outfld('CONCLD_COSP',     concld,                      ncol,lchnk)
+       call outfld('CLD_COSP',        cld,                         ncol,lchnk)
+       call outfld('O3_COSP',         o3,                          ncol,lchnk)
+       call outfld('LSCLIQ_COSP',     mr_lsliq,                    ncol,lchnk)
+       call outfld('LSCICE_COSP',     mr_lsice,                    ncol,lchnk)
+       call outfld('CVCLIQ_COSP',     mr_ccliq,                    ncol,lchnk)
+       call outfld('CVCICE_COSP',     mr_ccice,                    ncol,lchnk)
+       call outfld('RAIN_LS_COSP',    rain_ls_interp,              ncol,lchnk)
+       call outfld('SNOW_LS_COSP',    snow_ls_interp,              ncol,lchnk)
+       call outfld('GRPL_LS_COSP',    grpl_ls_interp,              ncol,lchnk)
+       call outfld('RAIN_CV_COSP',    rain_cv_interp,              ncol,lchnk)
+       call outfld('SNOW_CV_COSP',    snow_cv_interp,              ncol,lchnk)
+       call outfld('REFF_COSP_1',     reff_cosp(:,:,1),            ncol,lchnk)
+       call outfld('REFF_COSP_2',     reff_cosp(:,:,2),            ncol,lchnk)
+       call outfld('REFF_COSP_3',     reff_cosp(:,:,3),            ncol,lchnk)
+       call outfld('REFF_COSP_4',     reff_cosp(:,:,4),            ncol,lchnk)
+       call outfld('REFF_COSP_5',     reff_cosp(:,:,5),            ncol,lchnk)
+       call outfld('REFF_COSP_6',     reff_cosp(:,:,6),            ncol,lchnk)
+       call outfld('REFF_COSP_7',     reff_cosp(:,:,7),            ncol,lchnk)
+       call outfld('REFF_COSP_8',     reff_cosp(:,:,8),            ncol,lchnk)
+       call outfld('REFF_COSP_9',     reff_cosp(:,:,9),            ncol,lchnk)
+       call outfld('DTAU_S_COSP',     dtau_s,                      ncol,lchnk)
+       call outfld('DTAU_C_COSP',     dtau_c,                      ncol,lchnk)
+       call outfld('DEM_S_COSP',      dem_s,                       ncol,lchnk)
+       call outfld('DEM_C_COSP',      dem_c,                       ncol,lchnk)
+       call outfld('DTAU_S_COSP_SNOW',dtau_s_snow,                 ncol,lchnk)
+       call outfld('DEM_S_COSP_SNOW', dem_s_snow,                  ncol,lchnk)
     end if
     call t_stopf("cosp_histfile_aux")
 
