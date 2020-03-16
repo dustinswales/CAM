@@ -2400,7 +2400,7 @@ CONTAINS
 
     ! Joint Calipso/Clodsat
     if (lcloudsat_sim .and. lcalipso_sim) then
-       cldtot_calcs(1:ncol) = cospOUT%cloudsat_calipso_tcc                   ! CAM version of cltlidarradar (time,profile)
+       cldtot_calcs(1:ncol) = cospOUT%radar_lidar_tcc                   ! CAM version of cltlidarradar (time,profile)
        cld_cal_notcs(1:ncol,1:nht_cosp) = cospOUT%lidar_only_freq_cloud ! CAM version of clcalipso2 (time,height,profile)  
     endif
     
@@ -3498,7 +3498,7 @@ CONTAINS
     ! Joint Calipso/Cloudsat diagnostics
     if (lcloudsat_sim .and. lcalipso_sim) then
        allocate(x%lidar_only_freq_cloud(Npoints,Nlvgrid))
-       allocate(x%cloudsat_calipso_tcc(Npoints)) 
+       allocate(x%radar_lidar_tcc(Npoints)) 
        allocate(x%cloudsat_tcc(Npoints))
        allocate(x%cloudsat_tcc2(Npoints))
    endif
@@ -3642,9 +3642,9 @@ CONTAINS
         deallocate(y%cloudsat_cfad_ze)
         nullify(y%cloudsat_cfad_ze)     
      endif
-     if (associated(y%cloudsat_calipso_tcc))           then
-        deallocate(y%cloudsat_calipso_tcc) 
-        nullify(y%cloudsat_calipso_tcc)  
+     if (associated(y%radar_lidar_tcc))           then
+        deallocate(y%radar_lidar_tcc) 
+        nullify(y%radar_lidar_tcc)  
      endif
      if (associated(y%cloudsat_tcc))           then
         deallocate(y%cloudsat_tcc) 
